@@ -1,0 +1,44 @@
+name: smartsearch
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.10
+  - pip
+
+  - pip:
+      # Web Scraping
+      - selenium==4.11.2
+      - webdriver-manager==4.1.0
+      - beautifulsoup4==4.12.2
+      - requests==2.31.0
+      - lxml==4.9.3
+
+      # Database
+      - pymongo==4.4.0
+      - python-dotenv==1.0.0
+
+      # Images
+      - pillow==10.0.0
+      - opencv-python-headless==4.8.0.74
+      - python-magic==0.4.27
+
+      # NLP & Vision
+      - tensorflow==2.13.0
+      - tensorflow-hub==0.14.0
+      - scikit-learn==1.2.2
+
+      # Similarity Search
+      - faiss-cpu==1.7.4
+
+      # Utils
+      - numpy==1.24.3
+      - pandas==2.1.2
+      - tqdm==4.65.0
+      - packaging==23.1
+      - protobuf==4.23.4
+
+      # Tests & prod
+      - pytest==7.4.0
+      - gunicorn==20.1.0

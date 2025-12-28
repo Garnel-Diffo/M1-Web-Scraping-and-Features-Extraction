@@ -1,0 +1,52 @@
+# ==========================================
+# Dockerfile.features
+# Module M1 – Feature Extraction
+# ==========================================
+
+FROM python:3.10-slim
+
+LABEL maintainer="Lead M1"
+WORKDIR /app
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# System dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    wget \
+    curl \
+    git \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Miniconda
+RUN wget -q https://repo.anaconda.com/miniconda/Miniconda3-py310_23.3.1-1-Linux-x86_64.sh \
+    -O /tmp/miniconda.sh && \
+    bash /tmp/miniconda.sh -b -p /opt/conda && \
+    rm /tmp/miniconda.sh
+
+ENV PATH=/opt/conda/bin:$PATH
+
+# Create conda environment
+COPY environment.yml .
+RUN conda env create -f environment.yml && conda clean -afy
+
+# Non-root user
+ARG USER=smartuser
+ARG UID=1000
+RUN useradd -m -u ${UID} ${USER}
+USER ${USER}
+
+# Copy source
+COPY --chown=${USER}:${USER} src/ ./src
+COPY --chown=${USER}:${USER} dataset/ ./dataset
+
+VOLUME ["/app/dataset"]
+
+ENV MONGO_URI="mongodb://mongo:27017"
+ENV DATASET_DIR="/app/dataset"
+ENV TF_CPP_MIN_LOG_LEVEL=2
+ENV PYTHONUNBUFFERED=1
+
+# Default: visual feature extraction
+ENTRYPOINT ["conda", "run", "-n", "smartsearch", "python", "src/features/visual_embeddings.py"]

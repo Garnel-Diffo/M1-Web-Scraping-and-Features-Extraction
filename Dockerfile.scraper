@@ -1,0 +1,37 @@
+# ================================
+# Dockerfile.scraper
+# Module M1 – Web Scraping
+# ================================
+
+FROM continuumio/miniconda3:23.3.1
+
+LABEL maintainer="Lead M1"
+ENV CONDA_ENV=smartsearch
+ENV PATH=/opt/conda/envs/$CONDA_ENV/bin:$PATH
+
+WORKDIR /app
+
+# Create conda environment
+COPY environment.yml .
+RUN conda env create -f environment.yml && conda clean -afy
+
+# Create non-root user
+ARG USER=smartuser
+ARG UID=1000
+RUN useradd -m -u ${UID} ${USER}
+USER ${USER}
+
+# Copy source code
+COPY --chown=${USER}:${USER} src/ ./src
+COPY --chown=${USER}:${USER} dataset/ ./dataset
+
+VOLUME ["/app/dataset"]
+
+# Runtime configuration
+ENV MONGO_URI="mongodb://mongo:27017"
+ENV SELENIUM_REMOTE_URL="http://selenium:4444/wd/hub"
+ENV DATASET_DIR="/app/dataset"
+ENV PYTHONUNBUFFERED=1
+
+# Entry point
+ENTRYPOINT ["conda", "run", "-n", "smartsearch", "python", "src/scraping/selenium_scraper.py"]
