@@ -98,6 +98,41 @@ Préparation FAISS (Index prêt pour M2)
 - Docker / Docker Compose
 - Airflow (optionnel, recommandé)
 
+### Prérequis - Installations
+
+#### Git
+```bash
+git --version
+```
+
+#### Anaconda / Miniconda
+- https://www.anaconda.com/products/distribution
+- Vérification :
+```bash
+conda --version
+```
+
+#### Google Chrome + ChromeDriver
+- Chrome : https://www.google.com/chrome/
+- ChromeDriver : https://chromedriver.chromium.org/downloads
+- Ajouter `chromedriver` au PATH système
+
+#### MongoDB (local)
+- https://www.mongodb.com/try/download/community
+- Lancer le service MongoDB
+```bash
+mongod
+```
+- Vérification :
+```bash
+mongosh
+```
+
+*(Alternative simple via Docker si MongoDB local non disponible)*
+```bash
+docker run -d -p 27017:27017 --name mongo mongo:6
+```
+
 ---
 
 ## 5. Arborescence du projet
@@ -241,6 +276,26 @@ dataset/images/id_<product_id>.jpg
 - `scrape_logs`
 
 Chaque embedding est lié à un `product_id`.
+
+### Exemple de document `products`
+```json
+{
+  "product_id": "string",
+  "name": "string",
+  "description": "string",
+  "price": number,
+  "discount": number,
+  "category": "string",
+  "subcategory": "string",
+  "rating": number,
+  "image_url": "string",
+  "image_local_path": "/dataset/images/id_<product_id>.jpg",
+  "source_url": "string",
+  "scraped_at": "ISODate",
+  "status": "valid | invalid_image | incomplete"
+}
+
+```
 
 ---
 
