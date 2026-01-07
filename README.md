@@ -144,7 +144,7 @@ smartsearch-m1/
 ├── README.md
 ├── src/
 │   ├── scraping/
-│   │   ├── selenium_scraper.py
+│   │   ├── scraper_mongodb.py
 │   │   ├── parsers/
 │   │   └── utils_download.py
 │   ├── images/
@@ -365,3 +365,32 @@ Le Module 1 garantit que **les données fournies au moteur de recherche sont pro
 Tout le pipeline Smart Search repose sur la qualité et la rigueur de ce module.
 
 ---
+
+**Exécution & Planification (rapide)**
+- **Exécuter le scraper (local)**: activez l'environnement conda puis lancez :
+
+```bash
+conda activate smartsearch
+python src/scraping/scraper_mongodb.py --pages 50
+```
+
+- **Exécuter l'extraction textuelle** :
+
+```bash
+python src/features/text_embeddings.py
+```
+
+- **Exécuter l'extraction visuelle** :
+
+```bash
+python src/features/visual_embeddings.py
+```
+
+- **Construire l'index FAISS** :
+
+```bash
+python src/faiss/build_index.py
+```
+
+- **Planification** : un DAG Airflow est fourni dans `dags/scraping_dag.py` (programmation `@daily`). Si vous préférez `cron`, planifiez l'exécution des commandes ci-dessus via un script shell/PowerShell programmé.
+
