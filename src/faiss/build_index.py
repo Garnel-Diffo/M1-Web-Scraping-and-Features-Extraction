@@ -1,13 +1,23 @@
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
 import faiss
 import numpy as np
 import json
-from pathlib import Path
-from features.embeddings_store import get_db
+from src.features.embeddings_store import get_db
 
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT_DIR = ROOT / 'faiss'
 OUT_DIR.mkdir(parents=True, exist_ok=True)
+
+# Workaround for Windows path encoding issues with special characters
+# Use a temp location if needed, then move
+import tempfile
+import shutil
+TEMP_DIR = Path(tempfile.gettempdir()) / 'faiss_build'
+TEMP_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def build_index(collection_name='embeddings_text', index_name='text'):
@@ -28,13 +38,19 @@ def build_index(collection_name='embeddings_text', index_name='text'):
     index = faiss.IndexFlatIP(dim)
     index.add(vectors)
 
-    index_path = OUT_DIR / f'{index_name}.index'
-    faiss.write_index(index, str(index_path))
+    # Use temp directory for FAISS write due to path encoding issues on Windows
+    temp_index_path = TEMP_DIR / f'{index_name}.index'
+    faiss.write_index(index, str(temp_index_path))
+    
+    # Move to final location
+    final_index_path = OUT_DIR / f'{index_name}.index'
+    shutil.copy(str(temp_index_path), str(final_index_path))
+    
     mapping = {i: str(docs[i].get('product_id') or docs[i].get('product_id') or docs[i].get('product_id')) for i in range(len(docs))}
     with open(OUT_DIR / f'{index_name}_mapping.json', 'w', encoding='utf8') as f:
         json.dump(mapping, f, ensure_ascii=False, indent=2)
 
-    print(f'Built index {index_path} with {len(docs)} vectors (dim={dim})')
+    print(f'Built index {final_index_path} with {len(docs)} vectors (dim={dim})')
 
 
 if __name__ == '__main__':

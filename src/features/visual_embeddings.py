@@ -1,10 +1,13 @@
-import numpy as np
+import sys
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
+import numpy as np
 from PIL import Image
 import tensorflow as tf
 from tensorflow.keras.applications.xception import Xception, preprocess_input
 from tensorflow.keras.layers import Dense
-from features.embeddings_store import get_db, l2_normalize, save_embedding
+from src.features.embeddings_store import get_db, l2_normalize, save_embedding
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -32,6 +35,16 @@ def build_visual_embeddings(mongo_uri=None, db_name='SmartSearch', batch_size=16
         print('Aucun produit trouvé dans produits.')
         return
 
+    # optional environment limit for quick tests
+    import os
+    try:
+        limit = int(os.environ.get('VIS_LIMIT', '0'))
+    except Exception:
+        limit = 0
+    if limit and limit > 0:
+        produits = produits[:limit]
+
+    print(f'Loading models and preparing to process {len(produits)} products...')
     base, proj = load_models()
     coll_out = db['embeddings_image']
 
@@ -55,11 +68,27 @@ def build_visual_embeddings(mongo_uri=None, db_name='SmartSearch', batch_size=16
 
     for i in range(0, len(imgs), batch_size):
         batch_paths = imgs[i:i+batch_size]
-        arrs = np.stack([image_to_array(p) for p in batch_paths])
+        batch_ids = ids[i:i+batch_size]
+        arr_list = []
+        arr_ids = []
+        for pth, pid in zip(batch_paths, batch_ids):
+            try:
+                arr = image_to_array(pth)
+            except Exception as e:
+                print(f'Warning: skipping unreadable image {pth}: {e}')
+                continue
+            arr_list.append(arr)
+            arr_ids.append(pid)
+
+        if not arr_list:
+            print(f'Processed image batch {i//batch_size + 1} / {((len(imgs)-1)//batch_size)+1} (all skipped)')
+            continue
+
+        arrs = np.stack(arr_list)
         feats = base.predict(arrs, verbose=0)
         proj_feats = proj.predict(feats)
         for j, vec in enumerate(proj_feats):
-            pid = ids[i+j]
+            pid = arr_ids[j]
             vecn = l2_normalize(vec)
             save_embedding(coll_out, pid, vecn, model='Xception-4096')
         print(f'Processed image batch {i//batch_size + 1} / {((len(imgs)-1)//batch_size)+1}')

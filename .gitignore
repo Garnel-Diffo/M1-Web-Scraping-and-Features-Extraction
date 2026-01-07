@@ -1,1 +1,27 @@
-.venv
+/.venv/
+__pycache__/
+*.py[cod]
+
+# Virtual environment (project local)
+.venv/
+
+# Project data and generated indexes
+#/dataset/
+#/faiss/
+
+# Cached files and temporary
+.cache/
+logs/
+*.log
+
+# Archived utilities (kept out of main repo)
+/archived/
+
+# Editor/IDE configs
+.vscode/
+.idea/
+
+# OS files
+Thumbs.db
+Desktop.ini
+

@@ -1,8 +1,11 @@
-import numpy as np
+import sys
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
+import numpy as np
 from datetime import datetime
 import tensorflow_hub as hub
-from features.embeddings_store import get_db, l2_normalize, save_embedding
+from src.features.embeddings_store import get_db, l2_normalize, save_embedding
 
 
 def load_use():

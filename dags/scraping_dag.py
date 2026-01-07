@@ -27,7 +27,7 @@ with DAG(
 
     scrape = BashOperator(
         task_id='scrape_site',
-        bash_command=f"{PY} {ROOT}/src/scraping/scraper_mongodb.py --pages 50",
+        bash_command=f"{PY} {ROOT}/src/scraping/scraper_mongodb.py --pages 150",
     )
 
     text_emb = BashOperator(

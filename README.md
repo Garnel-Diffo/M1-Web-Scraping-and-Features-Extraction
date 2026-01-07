@@ -371,7 +371,7 @@ Tout le pipeline Smart Search repose sur la qualité et la rigueur de ce module.
 
 ```bash
 conda activate smartsearch
-python src/scraping/scraper_mongodb.py --pages 50
+python src/scraping/scraper_mongodb.py --pages 150
 ```
 
 - **Exécuter l'extraction textuelle** :

@@ -154,7 +154,7 @@ if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('--base', default='https://nowtechcenter.com/boutique/', help='Base shop url')
-    parser.add_argument('--pages', type=int, default=50)
+    parser.add_argument('--pages', type=int, default=150)
     parser.add_argument('--db', default='SmartSearch')
     args = parser.parse_args()
     scrape_site(args.base, max_pages=args.pages, db_name=args.db)
