@@ -21,7 +21,7 @@ with DAG(
     default_args=default_args,
     description='Scrape site, extract text and image features, build FAISS index',
     schedule_interval='@daily',
-    start_date=datetime(2025, 1, 1),
+    start_date=datetime(2026, 1, 28),
     catchup=False,
 ) as dag:
 

@@ -1,5 +1,5 @@
 
-# Module 1 (M1) – Collecte automatisée des données & Feature Extraction
+# Documentation Module 1 (M1) – Collecte automatisée des données & Feature Extraction
 ## Projet Smart Search – Recherche multimodale (Texte + Image)
 
 ---
@@ -56,7 +56,7 @@ Ce module est conçu pour être :
 ## 3. Architecture globale du Module 1
 
 ```
-Scraping (Selenium)
+Scraping (urllib + BeautifulSoup)
         ↓
 Validation & Nettoyage
         ↓
@@ -77,9 +77,9 @@ Préparation FAISS (Index prêt pour M2)
 - Python 3.10
 
 ### Scraping
-- Selenium (Chrome headless)
+- urllib (parsing d'URLs)
+- Requests (requêtes HTTP & téléchargement images)
 - BeautifulSoup (parsing HTML)
-- Requests (téléchargement images)
 
 ### Stockage
 - MongoDB
@@ -111,11 +111,6 @@ git --version
 ```bash
 conda --version
 ```
-
-#### Google Chrome + ChromeDriver
-- Chrome : https://www.google.com/chrome/
-- ChromeDriver : https://chromedriver.chromium.org/downloads
-- Ajouter `chromedriver` au PATH système
 
 #### MongoDB (local)
 - https://www.mongodb.com/try/download/community
@@ -176,7 +171,9 @@ conda activate smartsearch
 ```
 
 Principales dépendances :
-- selenium
+- urllib (standard library)
+- requests
+- beautifulsoup4
 - pymongo
 - tensorflow
 - tensorflow-hub

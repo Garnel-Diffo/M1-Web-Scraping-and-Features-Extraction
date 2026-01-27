@@ -34,4 +34,4 @@ ENV DATASET_DIR="/app/dataset"
 ENV PYTHONUNBUFFERED=1
 
 # Entry point
-ENTRYPOINT ["conda", "run", "-n", "smartsearch", "python", "src/scraping/selenium_scraper.py"]
+ENTRYPOINT ["conda", "run", "-n", "smartsearch", "python", "src/scraping/scraper_mongodb.py"]
